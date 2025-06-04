@@ -1,0 +1,29 @@
+name: PR Check
+
+on:
+  pull_request:
+    branches: [ main, dev ]
+
+jobs:
+  typecheck-and-lint:
+    name: Typecheck & Lint
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 'lts/*'
+          cache: 'npm'
+          
+      - name: Install dependencies
+        run: npm ci
+          
+      - name: Run Typecheck
+        run: npm run typecheck  # Or "tsc --noEmit" if you don't have a script
+        
+      - name: Run Linter
+        run: npm run lint  # Adjust to your lint command
