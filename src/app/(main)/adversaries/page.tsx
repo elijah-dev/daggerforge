@@ -2,6 +2,8 @@ import { getQueryClient, trpc } from "@/trpc/server";
 import { Users } from "./users";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 
+export const dynamic = "force-dynamic";
+
 export default async function Adversaries() {
   const queryClient = getQueryClient();
 
