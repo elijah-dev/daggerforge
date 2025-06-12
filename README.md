@@ -1,6 +1,7 @@
 # TODO
 
 - [] Setup DB
+- [x] Setup TRPC
 - [] Setup Auth with credentials
 - [] Setup Auth with Google
 
