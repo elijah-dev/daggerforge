@@ -13,7 +13,7 @@ export const Users = () => {
     <ul className="list-disc pl-5">
       {data?.map((user) => (
         <li key={user.id}>
-          {user.name} - {user.email}
+          {user.first_name} - {user.email}
         </li>
       ))}
     </ul>

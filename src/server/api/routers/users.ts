@@ -1,20 +1,28 @@
+import { usersTable } from "@/server/db/schema/users";
 import { createTRPCRouter, publicProcedure } from "../trpc";
+import { z } from "zod";
 
 export const usersRouter = createTRPCRouter({
-  getAll: publicProcedure.query(async () => {
-    await new Promise((resolve) => setTimeout(resolve, 5000)); // Simulate a delay
+  getAll: publicProcedure.query(async ({ctx: {db}}) => {
+    const  users = await db.select().from(usersTable);
 
-    return [
-      {
-        id: "1",
-        name: "John Doe",
-        email: "asd@asd.asd",
-      },
-      {
-        id: "2",
-        name: "Jane Smith",
-        email: "zxc@zxc.zx",
-      },
-    ];
+    return users;
   }),
+  create: publicProcedure
+    .input(
+      z.object({
+        first_name: z.string().nullish(),
+        last_name: z.string().nullish(),
+        email: z.string().email(),
+      })
+    )
+    .mutation(async ({ input, ctx: { db } }) => {
+      const newUser = await db.insert(usersTable).values({
+        first_name: input.first_name,
+        last_name: input.last_name,
+        email: input.email,
+      }).returning();
+
+      return newUser;
+    }),
 });
