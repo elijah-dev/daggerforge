@@ -1,9 +1,10 @@
 # TODO
 
-- [] Setup DB
+- [x] Setup DB
 - [x] Setup TRPC
 - [] Setup Auth with credentials
 - [] Setup Auth with Google
+- [] Setup Auth with Discord
 
 ## Features (Phase 1)
 
