@@ -15,6 +15,13 @@
       "when": 1749201382611,
       "tag": "0001_fearless_victor_mancha",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1750348284246,
+      "tag": "0002_special_rattler",
+      "breakpoints": true
     }
   ]
 }
