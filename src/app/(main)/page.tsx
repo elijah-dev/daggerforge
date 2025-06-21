@@ -1,7 +1,5 @@
-import { redirect } from "next/navigation";
-
 export default async function Home() {
-  await redirect("/adversaries");
 
-  return null;
+
+  return <>Home page</>;
 }

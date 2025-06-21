@@ -1,23 +1,28 @@
-import { signIn, signOut } from "@/auth";
-import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardTitle,
+} from "@/components/ui/card";
+import { GoogleSignInButton } from "@/components/google-sign-in-button";
+import { DiscordSignInButton } from "@/components/discord-sign-in-button";
 
 export default function SignIn() {
-  const handleSignIn = async () => {
-    "use server";
-    await signIn("google", { redirectTo: "/" });
-  };
-
-  const handleSignOut = async () => {
-    "use server";
-    await signOut({ redirectTo: "/sign-in" });
-  };
-
   return (
     <main className="flex flex-col gap-[32px] items-center h-full justify-center">
-      <h1 className="text-2xl font-bold">Sign In</h1>
-      <p className="text-gray-500">Please sign in to continue.</p>
-      <Button onClick={handleSignIn}>Sign in with Google</Button>
-      <Button onClick={handleSignOut}>Sign out</Button>
+      <Card className="w-full max-w-sm">
+        <div className="flex flex-col items-center gap-4">
+          <h1 className="text-2xl font-bold pb-4 font-(family-name:--font-sen)">DAGGERFORGE</h1>
+          <CardTitle>Sign In</CardTitle>
+          <CardDescription>
+            Please sign in to continue using the application.
+          </CardDescription>
+        </div>
+        <CardContent className="flex flex-col gap-4">
+          <GoogleSignInButton />
+          <DiscordSignInButton />
+        </CardContent>
+      </Card>
     </main>
   );
 }
