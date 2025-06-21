@@ -1,0 +1,1 @@
+ALTER TABLE "account" ADD CONSTRAINT "compoundKey" PRIMARY KEY("provider","providerAccountId");

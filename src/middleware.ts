@@ -3,9 +3,7 @@ import { authConfig } from "./auth.config";
 
 const { auth } = NextAuth(authConfig);
 
-export default auth((req) => {
-  console.log("Auth middleware called with args:", req.auth);
-});
+export default auth;
 
 export const config = {
   matcher: [
