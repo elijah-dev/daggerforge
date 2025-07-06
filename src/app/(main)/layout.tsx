@@ -1,3 +1,5 @@
+import { EncounterTitle } from "@/components/encounter-title";
+import { ModalsRegistry } from "@/components/modals-registry";
 import { ThemeSwitcher } from "@/components/theme-switcher";
 import { UserBadge } from "@/components/user-bage";
 import { TRPCClientProvider } from "@/trpc/client";
@@ -8,8 +10,9 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     <SessionProvider>
       <TRPCClientProvider>
         <header className="h-16 flex items-center justify-between px-4 fixed top-0 left-0 right-0 bg-sidebar border-b border-border">
-          <div>
+          <div className="flex items-center gap-6">
             <h1 className="text-xl font-semibold">DAGGERFORGE</h1>
+            <EncounterTitle />
           </div>
           <div className="flex items-center gap-6">
             <ThemeSwitcher />
@@ -19,6 +22,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         <main className="flex flex-col items-center h-full pt-16">
           {children}
         </main>
+        <ModalsRegistry />
       </TRPCClientProvider>
     </SessionProvider>
   );
