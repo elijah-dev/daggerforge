@@ -12,8 +12,6 @@ export const authConfig = {
   },
   callbacks: {
     jwt: async ({ token, user }) => {
-      console.log("JWT Callback - Token:", token, user);
-
       if (user) {
         token.id = user.id;
       }
@@ -21,8 +19,6 @@ export const authConfig = {
       return token;
     },
     session: async ({ session, token }) => {
-      console.log("Session Callback - Session:", session, "Token:", token);
-      
       if (token && token.id) {
         session.user.id = token.id as string;
       }

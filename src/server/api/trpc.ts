@@ -1,12 +1,15 @@
-import { initTRPC } from "@trpc/server";
+import { initTRPC, TRPCError } from "@trpc/server";
 import superjson from "superjson";
 import { ZodError } from "zod";
 import { db } from "../db/db";
+import { auth } from "@/auth";
 
-export const createTRPCContext = (context: { headers: Headers }) => {
-  // You can add any context you need here, such as database connections or authentication
+export const createTRPCContext = async (context: { headers: Headers }) => {
+  const session = await auth();
+  
   return {
     db,
+    session,
     ...context,
   };
 };
@@ -28,14 +31,18 @@ const t = initTRPC.context<typeof createTRPCContext>().create({
 export const createTRPCRouter = t.router;
 export const publicProcedure = t.procedure;
 export const protectedProcedure = t.procedure.use(async ({ ctx, next }) => {
-  // Here you can add authentication logic, for example:
-  // if (!ctx.user) {
-  //   throw new Error("Unauthorized");
-  // }
+  if (!ctx.session || !ctx.session.user) {
+    throw new TRPCError({
+      code: "UNAUTHORIZED",
+      message: "You must be logged in to access this resource",
+    });
+  }
+
   return next({
     ctx: {
       ...ctx,
-      // Add user or other context properties here
+      session: ctx.session,
+      user: ctx.session.user,
     },
   });
 }
