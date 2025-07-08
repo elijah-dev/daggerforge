@@ -22,6 +22,8 @@ import { TagSelectField } from "./tag-select-field";
 import { ExperienceSelectField } from "./experience-select-field";
 import { useMutation } from "@tanstack/react-query";
 import { useTRPC } from "@/trpc/client";
+import { FeatureFormBlockList } from "./feature-form-block-list";
+import { ReactNode } from "react";
 
 const tierOptions = adversaryTiersEnum.options.map((tier) => ({
   value: tier,
@@ -48,6 +50,10 @@ const damageDieOptions = adversaryDamageDiceEnum.options.map((die) => ({
   label: `d${die}`,
 }));
 
+const BlockTitle = ({ children }: { children: ReactNode }) => (
+  <h2 className="text-muted-foreground mb-2">{children}</h2>
+);
+
 export const AdversaryForm = () => {
   const form = useForm({
     resolver: zodResolver(adversarySchema),
@@ -72,6 +78,7 @@ export const AdversaryForm = () => {
       motivesAndTactics: [],
       experiences: [],
       public: false,
+      features: [],
     },
   });
 
@@ -91,7 +98,7 @@ export const AdversaryForm = () => {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="w-full space-y-2">
-        <h2 className="text-muted-foreground mb-4">General</h2>
+        <BlockTitle>General</BlockTitle>
         <div className="flex gap-4">
           <SelectField
             control={form.control}
@@ -134,7 +141,7 @@ export const AdversaryForm = () => {
           textareaClassName="resize-none"
           placeholder="A horse-sized insect with digging claws and acidic blood."
         />
-        <h2 className="text-muted-foreground mb-4">Stats</h2>
+        <BlockTitle>Stats</BlockTitle>
         <div className="flex gap-4">
           <NumberField
             control={form.control}
@@ -176,7 +183,7 @@ export const AdversaryForm = () => {
             className="w-full"
           />
         </div>
-        <h2 className="text-muted-foreground mb-4">Attack</h2>
+        <BlockTitle>Attack</BlockTitle>
         <TextField
           control={form.control}
           name="attackName"
@@ -230,7 +237,7 @@ export const AdversaryForm = () => {
             className="w-full"
           />
         </div>
-        <h2 className="text-muted-foreground mb-4">Behavior</h2>
+        <BlockTitle>Behavior</BlockTitle>
         <TagSelectField
           control={form.control}
           name="motivesAndTactics"
@@ -245,7 +252,17 @@ export const AdversaryForm = () => {
           placeholder="Tremor Sense"
           max={6}
         />
+        <BlockTitle>Features</BlockTitle>
+        <FeatureFormBlockList name="features" />
         <Button type="submit">Submit</Button>
+        <Button
+          type="button"
+          onClick={() => {
+            console.log(form.getValues());
+          }}
+        >
+          asd
+        </Button>
       </form>
     </Form>
   );

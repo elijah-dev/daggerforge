@@ -1,0 +1,46 @@
+import { useFormContext } from "react-hook-form";
+import { TextField } from "./text-field";
+import { SelectField } from "./select-field";
+import { featureTypesEnum } from "@/zod/feature";
+import { TextEditorField } from "./text-editor-field";
+
+type FeatureFormBlockProps = {
+  name: string;
+  index: number;
+};
+
+const featureTypeOptions = featureTypesEnum.options.map((type) => ({
+  value: type,
+  label: type.charAt(0).toUpperCase() + type.slice(1),
+}));
+
+export const FeatureFormBlock = ({ name, index }: FeatureFormBlockProps) => {
+  const { control } = useFormContext();
+
+  return (
+    <div className="flex flex-col space-y-2">
+      <div className="flex items-center gap-2">
+        <TextField
+          control={control}
+          name={`${name}.${index}.name`}
+          label="Feature Name"
+          placeholder="Spit Acid"
+          className="w-[200%]"
+        />
+        <SelectField
+          control={control}
+          name={`${name}.${index}.type`}
+          label="Feature Type"
+          options={featureTypeOptions}
+          className="w-full"
+          triggerClassName="w-full"
+        />
+      </div>
+      <TextEditorField
+        control={control}
+        name={`${name}.${index}.description`}
+        label="Feature Description"
+      />
+    </div>
+  );
+};
