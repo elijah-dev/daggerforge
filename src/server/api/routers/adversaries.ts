@@ -4,12 +4,13 @@ import { adversarySchema } from "@/zod/adversary";
 import { motivesTacticsTable } from "@/server/db/schema/motives-tactics";
 import { adversariesMotivesTacticsTable } from "@/server/db/schema/adversaries-motives-tactics";
 import { experiencesTable } from "@/server/db/schema/experiences";
+import { featuresTable } from "@/server/db/schema/features";
 
 export const adversariesRouter = createTRPCRouter({
   create: protectedProcedure
     .input(adversarySchema)
     .mutation(async ({ input, ctx: { db, user } }) => {
-      await db.transaction(async (tx) => {
+      const adversary = await db.transaction(async (tx) => {
         const [createdAdversary] = await tx
           .insert(adversariesTable)
           .values([
@@ -41,15 +42,15 @@ export const adversariesRouter = createTRPCRouter({
           ])
           .returning();
 
-        const motivesAndTactics = input.motivesAndTactics.map((motive) => ({
-          adversary_id: createdAdversary.id,
-          name: motive.toLowerCase(),
-          is_public: input.public ?? false,
-        }));
-
         const createdTactics = await tx
           .insert(motivesTacticsTable)
-          .values(motivesAndTactics)
+          .values(
+            input.motivesAndTactics.map((motive) => ({
+              adversary_id: createdAdversary.id,
+              name: motive.toLowerCase(),
+              is_public: input.public ?? false,
+            }))
+          )
           .onConflictDoNothing()
           .returning();
 
@@ -60,17 +61,37 @@ export const adversariesRouter = createTRPCRouter({
           }))
         );
 
-        if (input.experiences.length > 0) {
-          await tx.insert(experiencesTable).values(
+        const createdExperiences = await tx
+          .insert(experiencesTable)
+          .values(
             input.experiences.map((experience) => ({
               adversary_id: createdAdversary.id,
               name: experience.name.toLowerCase(),
               value: experience.value,
             }))
-          );
-        }
+          )
+          .returning();
+
+        const createdFeatures = await tx
+          .insert(featuresTable)
+          .values(
+            input.features.map((feature) => ({
+              adversary_id: createdAdversary.id,
+              name: feature.name.toLowerCase(),
+              description: feature.description,
+              type: feature.type,
+            }))
+          )
+          .returning();
+
+        return {
+          ...createdAdversary,
+          motivesAndTactics: createdTactics,
+          experiences: createdExperiences,
+          features: createdFeatures,
+        };
       });
 
-      return { success: true };
+      return adversary;
     }),
 });

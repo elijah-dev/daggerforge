@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { FeatureSchema } from "./feature";
 
 export const adversaryTypes = [
   "bruiser",
@@ -85,4 +86,5 @@ export const adversarySchema = z.object({
     .nonempty("At least one experience is required")
     .max(6, "Maximum 6 experiences allowed"),
   public: z.boolean().default(false),
+  features: z.array(FeatureSchema).default([]),
 });

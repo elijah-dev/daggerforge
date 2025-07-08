@@ -1,8 +1,9 @@
-import { integer, pgEnum, pgTable, text, uuid } from "drizzle-orm/pg-core";
+import { pgEnum, pgTable, text, uuid } from "drizzle-orm/pg-core";
 import { timestampts } from "./utils";
 import { adversariesTable } from "./adversaries";
+import { featureTypes, featureTypesEnum } from "@/zod/feature";
 
-export const featureType = pgEnum("feature_type", ["action", "passive", "reaction"]);
+export const featureType = pgEnum("feature_type", featureTypes);
 
 export const featuresTable = pgTable("features", {
   id: uuid().primaryKey().defaultRandom().notNull(),
@@ -10,11 +11,7 @@ export const featuresTable = pgTable("features", {
     .notNull()
     .references(() => adversariesTable.id),
   name: text().notNull(),
-  value: integer(),
-  modified_attack_damage: text(),
   description: text().notNull(),
-  type: featureType().default("action").notNull(),
-  fear_cost: integer(),
-  stress_cost: integer(),
+  type: featureType().default(featureTypesEnum.Enum.action).notNull(),
   ...timestampts,
 });
