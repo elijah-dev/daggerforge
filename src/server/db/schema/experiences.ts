@@ -6,8 +6,10 @@ export const experiencesTable = pgTable("experiences", {
   id: uuid().primaryKey().defaultRandom().notNull(),
   adversary_id: uuid()
     .notNull()
-    .references(() => adversariesTable.id),
+    .references(() => adversariesTable.id, { onDelete: "cascade" }),
   name: text().notNull(),
   value: integer().notNull().default(0),
   ...timestampts,
 });
+
+export type SelectExperience = typeof experiencesTable.$inferSelect;

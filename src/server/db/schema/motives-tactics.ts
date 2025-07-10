@@ -7,3 +7,5 @@ export const motivesTacticsTable = pgTable("motives_tactics", {
   is_public: boolean().default(false).notNull(),
   ...timestampts,
 });
+
+export type SelectMotiveTactic = typeof motivesTacticsTable.$inferSelect;

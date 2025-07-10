@@ -22,7 +22,7 @@ export const FeatureFormBlockList = ({ name }: FeatureFormBlockListProps) => {
         variant="outline"
         onClick={() => append({ name: "", type: featureTypesEnum.Enum.action })}
       >
-        Add a Feature
+        Add Feature
       </Button>
     </div>
   );
