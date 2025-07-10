@@ -83,11 +83,10 @@ export const AdversaryForm = () => {
   });
 
   const trpc = useTRPC();
-  const { mutate } = useMutation({
+  const { mutate, isPending } = useMutation({
     ...trpc.adversaries.create.mutationOptions(),
-    onSuccess: (...args) => {
+    onSuccess: () => {
       form.reset();
-      console.log("Adversary created successfully:", ...args);
     },
   });
 
@@ -254,14 +253,8 @@ export const AdversaryForm = () => {
         />
         <BlockTitle>Features</BlockTitle>
         <FeatureFormBlockList name="features" />
-        <Button type="submit">Submit</Button>
-        <Button
-          type="button"
-          onClick={() => {
-            console.log(form.getValues());
-          }}
-        >
-          asd
+        <Button type="submit" disabled={isPending}>
+          Submit
         </Button>
       </form>
     </Form>

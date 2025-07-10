@@ -1,8 +1,9 @@
 "use client";
 
 import { useAtom } from "jotai";
-import { Dialog, DialogHeader, DialogTitle, DialogContent } from "./ui/dialog";
+import { Dialog, DialogHeader, DialogTitle, DialogContent } from "../ui/dialog";
 import { addAdversaryModalAtom } from "@/atoms/modals";
+import { EditEncounterModalContent } from "./edit-encounter-modal-content";
 
 export const CreateAdversaryModal = () => {
   const [open, setOpen] = useAtom(addAdversaryModalAtom);
@@ -15,10 +16,10 @@ export const CreateAdversaryModal = () => {
       >
         <DialogHeader>
           <DialogTitle className="text-lg font-semibold">
-            Create Adversary
+            Edit Encounter
           </DialogTitle>
         </DialogHeader>
-        <div className="flex flex-col gap-4"></div>
+        <EditEncounterModalContent />
       </DialogContent>
     </Dialog>
   );

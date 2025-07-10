@@ -20,8 +20,6 @@ export const usersRouter = createTRPCRouter({
       const newUser = await db
         .insert(usersTable)
         .values({
-          first_name: input.first_name,
-          last_name: input.last_name,
           email: input.email,
         })
         .returning();

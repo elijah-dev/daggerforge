@@ -3,6 +3,7 @@
 import { useTheme } from "next-themes";
 import { Switch } from "./ui/switch";
 import { useEffect, useState } from "react";
+import { Moon, Sun } from "lucide-react";
 
 export const ThemeSwitcher = () => {
   const { setTheme, systemTheme } = useTheme();
@@ -19,10 +20,14 @@ export const ThemeSwitcher = () => {
   }, [systemTheme]);
 
   return (
-    <Switch
-      checked={checked}
-      aria-checked={checked}
-      onCheckedChange={handleChange}
-    />
+    <div className="flex items-center gap-2 [&_svg]:w-5 [&_svg]:h-5 [&_svg]:text-muted-foreground">
+      <Sun />
+      <Switch
+        checked={checked}
+        aria-checked={checked}
+        onCheckedChange={handleChange}
+      />
+      <Moon />
+    </div>
   );
 };

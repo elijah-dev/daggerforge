@@ -1,45 +1,49 @@
 import { adversariesTable } from "@/server/db/schema/adversaries";
-import { createTRPCRouter, protectedProcedure } from "../trpc";
+import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 import { adversarySchema } from "@/zod/adversary";
 import { motivesTacticsTable } from "@/server/db/schema/motives-tactics";
 import { adversariesMotivesTacticsTable } from "@/server/db/schema/adversaries-motives-tactics";
 import { experiencesTable } from "@/server/db/schema/experiences";
 import { featuresTable } from "@/server/db/schema/features";
+import { prepareAdversaryInsert, groupAdversaries } from "@/server/api/utils/adversaries";
+import { eq, desc } from "drizzle-orm";
 
 export const adversariesRouter = createTRPCRouter({
+  getAll: publicProcedure.query(async ({ ctx: { db } }) => {
+    const adversaries = await db
+      .select()
+      .from(adversariesTable)
+      .leftJoin(
+        adversariesMotivesTacticsTable,
+        eq(adversariesTable.id, adversariesMotivesTacticsTable.adversary_id)
+      )
+      .leftJoin(
+        motivesTacticsTable,
+        eq(
+          adversariesMotivesTacticsTable.motive_tactic_id,
+          motivesTacticsTable.id
+        )
+      )
+      .leftJoin(
+        experiencesTable,
+        eq(adversariesTable.id, experiencesTable.adversary_id)
+      )
+      .leftJoin(
+        featuresTable,
+        eq(adversariesTable.id, featuresTable.adversary_id)
+      )
+      .orderBy(desc(adversariesTable.name));
+
+      return groupAdversaries(adversaries);
+  }),
+
   create: protectedProcedure
     .input(adversarySchema)
     .mutation(async ({ input, ctx: { db, user } }) => {
       const adversary = await db.transaction(async (tx) => {
         const [createdAdversary] = await tx
           .insert(adversariesTable)
-          .values([
-            {
-              name: input.name,
-              tier: Number(input.tier),
-              type: input.type,
-              creatures_per_hp: input.creaturesPerHp ?? 0,
-              description: input.description ?? "",
-              difficulty: input.difficulty,
-              major_threshold: input.majorThreshold,
-              severe_threshold: input.severeThreshold,
-              hp: input.hp,
-              stress: input.stress,
-              attack_modifier: input.attackModifier ?? 0,
-              attack_name: input.attackName ?? "",
-              attack_range: input.attackRange,
-              attack_damage: `${input.attackDamageDieCount ?? 1}d${
-                input.attackDamageDie ?? 6
-              }${
-                input.attackDamageModifier
-                  ? `+${Math.abs(input.attackDamageModifier)}`
-                  : ""
-              }`,
-              attack_damage_type: input.attackDamageType,
-              is_public: input.public ?? false,
-              created_by: user.id,
-            },
-          ])
+          .values([prepareAdversaryInsert(input, user)])
           .returning();
 
         const createdTactics = await tx
