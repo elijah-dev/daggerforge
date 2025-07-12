@@ -9,3 +9,5 @@ export const FeatureSchema = z.object({
   description: z.string(),
   type: featureTypesEnum.default("action"),
 });
+
+export type Feature = z.infer<typeof FeatureSchema>;

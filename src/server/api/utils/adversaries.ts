@@ -1,12 +1,12 @@
+import { castToNumber, formatDamageString } from "@/lib/utils";
 import { SelectAdversary } from "@/server/db/schema/adversaries";
 import { SelectExperience } from "@/server/db/schema/experiences";
 import { SelectFeature } from "@/server/db/schema/features";
 import { SelectMotiveTactic } from "@/server/db/schema/motives-tactics";
-import { adversarySchema } from "@/zod/adversary";
-import z from "zod";
+import { AdversaryForm } from "@/zod/adversary";
 
 export const prepareAdversaryInsert = (
-  adversary: z.infer<typeof adversarySchema>,
+  adversary: AdversaryForm,
   user: { id?: string }
 ) => {
   return {
@@ -23,16 +23,15 @@ export const prepareAdversaryInsert = (
     attack_modifier: adversary.attackModifier ?? 0,
     attack_name: adversary.attackName ?? "",
     attack_range: adversary.attackRange,
-    attack_damage: `${adversary.attackDamageDieCount ?? 1}d${
-      adversary.attackDamageDie ?? 6
-    }${
+    attack_damage: formatDamageString(
+      adversary.attackDamageDieCount,
+      castToNumber(adversary.attackDamageDie, 6),
       adversary.attackDamageModifier
-        ? `+${Math.abs(adversary.attackDamageModifier)}`
-        : ""
-    }`,
+    ),
     attack_damage_type: adversary.attackDamageType,
     is_public: adversary.public ?? false,
     created_by: user.id,
+    source: adversary.source,
   };
 };
 

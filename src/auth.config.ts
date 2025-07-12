@@ -52,8 +52,6 @@ export const authConfig = {
   },
   callbacks: {
     jwt: async ({ token, user }) => {
-      console.log(user);
-      
       if (user) {
         token.id = user.id;
         token.role = user.role || rolesEnum.Enum.user;
@@ -65,7 +63,7 @@ export const authConfig = {
       if (token && token.id) {
         session.user.id = token.id as string;
       }
-      
+
       if (token && token.role) {
         session.user.role = token.role as z.infer<typeof rolesEnum>;
       }
