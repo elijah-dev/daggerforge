@@ -3,12 +3,12 @@
 import { Form } from "./ui/form";
 import { Button } from "./ui/button";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
 import {
   adversaryAttackRangesEnum,
   adversaryDamageDiceEnum,
   adversaryDamageTypesEnum,
-  adversarySchema,
+  AdversaryForm as AdversaryFormType,
+  adversaryFormSchema,
   adversaryTiersEnum,
   adversaryTypesEnum,
 } from "@/zod/adversary";
@@ -23,7 +23,14 @@ import { ExperienceSelectField } from "./experience-select-field";
 import { useMutation } from "@tanstack/react-query";
 import { useTRPC } from "@/trpc/client";
 import { FeatureFormBlockList } from "./feature-form-block-list";
-import { ReactNode } from "react";
+import { ReactNode, useEffect } from "react";
+import { useSession } from "next-auth/react";
+import { SourceField } from "./source-field";
+import { SwitchField } from "./switch-field";
+import { useSetAtom } from "jotai";
+import { adversaryFormAtom } from "@/atoms/forms";
+import { adversaryFormPlaceholders } from "@/constants/placeholders";
+import { toast } from "sonner";
 
 const tierOptions = adversaryTiersEnum.options.map((tier) => ({
   value: tier,
@@ -55,8 +62,13 @@ const BlockTitle = ({ children }: { children: ReactNode }) => (
 );
 
 export const AdversaryForm = () => {
+  const session = useSession();
+  const isSuperAdmin = session.data?.user?.role === "superadmin";
+
+  const setFormValues = useSetAtom(adversaryFormAtom);
+
   const form = useForm({
-    resolver: zodResolver(adversarySchema),
+    resolver: zodResolver(adversaryFormSchema),
     defaultValues: {
       name: "",
       tier: adversaryTiersEnum.Enum["1"],
@@ -82,21 +94,53 @@ export const AdversaryForm = () => {
     },
   });
 
+  useEffect(() => {
+    form.subscribe({
+      formState: {
+        values: true,
+      },
+      callback: (state) => {
+        setFormValues(state.values);
+      },
+    });
+    setFormValues(form.getValues());
+  }, [form, setFormValues]);
+
   const trpc = useTRPC();
   const { mutate, isPending } = useMutation({
     ...trpc.adversaries.create.mutationOptions(),
     onSuccess: () => {
       form.reset();
+      toast.success("Adversary created successfully!");
+    },
+    onError: () => {
+      toast.error("Failed to create adversary. Please try again.");
     },
   });
 
-  const onSubmit = (data: z.infer<typeof adversarySchema>) => {
+  const onSubmit = (data: AdversaryFormType) => {
     mutate(data);
   };
 
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="w-full space-y-2">
+        {isSuperAdmin && (
+          <div className="flex items-center gap-4">
+            <SourceField
+              control={form.control}
+              name="source"
+              className="w-full"
+              triggerClassName="w-full"
+            />
+            <SwitchField
+              control={form.control}
+              name="public"
+              label="Make Public"
+              className="w-full"
+            />
+          </div>
+        )}
         <BlockTitle>General</BlockTitle>
         <div className="flex gap-4">
           <SelectField
@@ -131,14 +175,14 @@ export const AdversaryForm = () => {
           control={form.control}
           name="name"
           label="Name"
-          placeholder="Acid Burrower"
+          placeholder={adversaryFormPlaceholders.name}
         />
         <TextAreaField
           control={form.control}
           name="description"
           label="Description"
           textareaClassName="resize-none"
-          placeholder="A horse-sized insect with digging claws and acidic blood."
+          placeholder={adversaryFormPlaceholders.description}
         />
         <BlockTitle>Stats</BlockTitle>
         <div className="flex gap-4">
@@ -187,7 +231,7 @@ export const AdversaryForm = () => {
           control={form.control}
           name="attackName"
           label="Attack Name"
-          placeholder="Claws"
+          placeholder={adversaryFormPlaceholders.attackName}
         />
         <div className="flex gap-4">
           <NumberField
@@ -241,21 +285,32 @@ export const AdversaryForm = () => {
           control={form.control}
           name="motivesAndTactics"
           label="Motives and Tactics"
-          placeholder="Burrow"
+          placeholder={adversaryFormPlaceholders.motivesAndTactics}
           max={6}
         />
         <ExperienceSelectField
           control={form.control}
           name="experiences"
           label="Experiences"
-          placeholder="Tremor Sense"
+          placeholder={adversaryFormPlaceholders.experiences}
           max={6}
         />
         <BlockTitle>Features</BlockTitle>
         <FeatureFormBlockList name="features" />
-        <Button type="submit" disabled={isPending}>
-          Submit
-        </Button>
+        <div className="flex gap-4">
+          <Button type="submit" disabled={isPending}>
+            Submit
+          </Button>
+          {isSuperAdmin && (
+            <Button
+              onClick={() => {
+                console.log(form.getValues());
+              }}
+            >
+              Debug
+            </Button>
+          )}
+        </div>
       </form>
     </Form>
   );

@@ -15,6 +15,7 @@ import {
   adversaryDamageTypes,
   adversaryTypes,
 } from "@/zod/adversary";
+import { sourcesTable } from "./sources";
 
 export const adversaryType = pgEnum("adversary_type", adversaryTypes);
 
@@ -44,6 +45,7 @@ export const adversariesTable = pgTable(
     created_by: uuid().references(() => usersTable.id, {
       onDelete: "set null",
     }),
+    source: uuid().references(() => sourcesTable.id, { onDelete: "set null" }),
     is_public: boolean().default(false).notNull(),
     ...timestampts,
   },

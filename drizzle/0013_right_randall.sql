@@ -1,0 +1,2 @@
+ALTER TABLE "adversaries" ADD COLUMN "source" uuid;--> statement-breakpoint
+ALTER TABLE "adversaries" ADD CONSTRAINT "adversaries_source_sources_id_fk" FOREIGN KEY ("source") REFERENCES "public"."sources"("id") ON DELETE set null ON UPDATE no action;

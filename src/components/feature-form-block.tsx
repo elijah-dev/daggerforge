@@ -3,6 +3,7 @@ import { TextField } from "./text-field";
 import { SelectField } from "./select-field";
 import { featureTypesEnum } from "@/zod/feature";
 import { TextEditorField } from "./text-editor-field";
+import { adversaryFormPlaceholders } from "@/constants/placeholders";
 
 type FeatureFormBlockProps = {
   name: string;
@@ -24,7 +25,7 @@ export const FeatureFormBlock = ({ name, index }: FeatureFormBlockProps) => {
           control={control}
           name={`${name}.${index}.name`}
           label="Feature Name"
-          placeholder="Spit Acid"
+          placeholder={adversaryFormPlaceholders.featureName}
           className="w-[200%]"
         />
         <SelectField

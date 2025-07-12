@@ -39,6 +39,7 @@ export const SelectField = <
   className,
   labelClassName,
   triggerClassName,
+  disabled
 }: Omit<ControllerProps<TFieldValues, TName>, "render"> & SelectFieldProps) => {
   return (
     <FormField
@@ -52,6 +53,7 @@ export const SelectField = <
               onValueChange={field.onChange}
               value={field.value}
               defaultValue={field.value}
+              disabled={disabled}
             >
               <FormControl>
                 <SelectTrigger className={triggerClassName}>

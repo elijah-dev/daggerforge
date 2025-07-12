@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { FeatureSchema } from "./feature";
+import { ExperienceSchema } from "./experience";
 
 export const adversaryTypes = [
   "bruiser",
@@ -42,9 +43,9 @@ export const adversaryDamageTypesEnum = z.enum(adversaryDamageTypes);
 export const adversaryTiersEnum = z.enum(adversaryTiers);
 export const adversaryDamageDiceEnum = z.enum(adversaryDamageDice);
 
-export const adversarySchema = z.object({
+export const adversaryFormSchema = z.object({
   name: z.string().min(1, "Name is required"),
-  tier: adversaryTiersEnum.default("1"),
+  tier: adversaryTiersEnum,
   type: adversaryTypesEnum,
   creaturesPerHp: z.number().int().optional(),
   description: z.string().optional(),
@@ -77,14 +78,17 @@ export const adversarySchema = z.object({
     .nonempty("At least one motive or tactic is required")
     .max(6, "Maximum 6 motives and tactics allowed"),
   experiences: z
-    .array(
-      z.object({
-        name: z.string(),
-        value: z.number(),
-      })
-    )
-    .nonempty("At least one experience is required")
+    .array(ExperienceSchema)
     .max(6, "Maximum 6 experiences allowed"),
   public: z.boolean().default(false),
   features: z.array(FeatureSchema).default([]),
+  source: z.string().optional(),
 });
+
+export type AdversaryTypes = z.infer<typeof adversaryTypesEnum>;
+export type AdversaryAttackRanges = z.infer<typeof adversaryAttackRangesEnum>;
+export type AdversaryDamageTypes = z.infer<typeof adversaryDamageTypesEnum>;
+export type AdversaryTiers = z.infer<typeof adversaryTiersEnum>;
+export type AdversaryDamageDice = z.infer<typeof adversaryDamageDiceEnum>;
+
+export type AdversaryForm = z.infer<typeof adversaryFormSchema>;
