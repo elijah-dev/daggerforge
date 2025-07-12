@@ -124,14 +124,14 @@ export const AdversaryDetails = (props: AdversaryDetailsProps) => {
       </div>
       {filteredFeatures.length ? (
         <div>
-          <h4 className="font-semibold block mb-2">FEATURES</h4>
+          <h4 className="font-semibold block">FEATURES</h4>
           {filteredFeatures.map((feature) => (
             <div key={feature.name} className="mb-1 pb-1 border-b last:border-0 last:mb-0 last:pb-0">
-              <span className="font-semibold italic">
+              <span className="font-semibold italic text-sm">
                 {capitalize(feature.name)} - {capitalize(feature.type)}:
               </span>
               <div
-                className="[&_ul]:list-disc [&_ul]:pl-4 [&_ul]:mt-1 [&_ol]:list-decimal [&_ol]:pl-4 [&_ol]:mt-1 font-extralight [&_strong]:font-semibold"
+                className="[&_ul]:list-disc [&_ul]:pl-4 [&_ul]:mt-1 [&_ol]:list-decimal [&_ol]:pl-4 [&_ol]:mt-1 font-extralight [&_strong]:font-semibold text-sm"
                 dangerouslySetInnerHTML={{
                   __html: sanitizeHtml(feature.description ?? ""),
                 }}

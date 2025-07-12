@@ -1,4 +1,4 @@
-import { castToNumber, formatDamageString } from "@/lib/utils";
+import { castToNumber, formatDamageString, includesBy } from "@/lib/utils";
 import { SelectAdversary } from "@/server/db/schema/adversaries";
 import { SelectExperience } from "@/server/db/schema/experiences";
 import { SelectFeature } from "@/server/db/schema/features";
@@ -63,16 +63,20 @@ export const groupAdversaries = (
       };
     }
 
-    if (motives_tactics) {
-      grouped[adversaries.id].motivesAndTactics.push(motives_tactics);
+    const mt = grouped[adversaries.id].motivesAndTactics;
+    const exp = grouped[adversaries.id].experiences;
+    const feats = grouped[adversaries.id].features;
+
+    if (motives_tactics && !includesBy(mt, "id", motives_tactics.id)) {
+      mt.push(motives_tactics);
     }
 
-    if (experiences) {
-      grouped[adversaries.id].experiences.push(experiences);
+    if (experiences && !includesBy(exp, "id", experiences.id)) {
+      exp.push(experiences);
     }
 
-    if (features) {
-      grouped[adversaries.id].features.push(features);
+    if (features && !includesBy(feats, "id", features.id)) {
+      feats.push(features);
     }
   });
 

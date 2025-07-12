@@ -12,7 +12,7 @@ export const CreateAdversaryModal = () => {
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent
         onInteractOutside={(e) => e.preventDefault()}
-        className="w-2xl"
+        className="w-[90vw] max-w-7xl h-[80vh] max-h-[80vh] flex flex-col"
       >
         <DialogHeader>
           <DialogTitle className="text-lg font-semibold">

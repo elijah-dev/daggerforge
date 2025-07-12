@@ -4,6 +4,8 @@ import { SelectField } from "./select-field";
 import { featureTypesEnum } from "@/zod/feature";
 import { TextEditorField } from "./text-editor-field";
 import { adversaryFormPlaceholders } from "@/constants/placeholders";
+import { Card } from "./ui/card";
+import { useEffect, useRef } from "react";
 
 type FeatureFormBlockProps = {
   name: string;
@@ -16,10 +18,17 @@ const featureTypeOptions = featureTypesEnum.options.map((type) => ({
 }));
 
 export const FeatureFormBlock = ({ name, index }: FeatureFormBlockProps) => {
+  const ref = useRef<HTMLDivElement>(null);
   const { control } = useFormContext();
 
+  useEffect(() => {
+    if (ref.current) {
+      ref.current.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }, []);
+
   return (
-    <div className="flex flex-col space-y-2">
+    <Card ref={ref} className="flex flex-col space-y-2 p-4">
       <div className="flex items-center gap-2">
         <TextField
           control={control}
@@ -42,6 +51,6 @@ export const FeatureFormBlock = ({ name, index }: FeatureFormBlockProps) => {
         name={`${name}.${index}.description`}
         label="Feature Description"
       />
-    </div>
+    </Card>
   );
 };
