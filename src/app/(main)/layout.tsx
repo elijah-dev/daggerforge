@@ -20,7 +20,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             <UserBadge />
           </div>
         </header>
-        <main className="flex flex-col items-center h-full pt-16">
+        <main className="flex flex-col items-center min-h-full pt-16">
           {children}
         </main>
         <ModalsRegistry />

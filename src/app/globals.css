@@ -146,3 +146,8 @@ button {
   pointer-events: none;
 }
 
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--muted-foreground) rgba(0, 0, 0, 0); ;
+}
+
