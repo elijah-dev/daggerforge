@@ -266,7 +266,7 @@ export const AdversaryForm = () => {
             control={form.control}
             name="attackDamageDieCount"
             label="Number of Dice"
-            min={1}
+            min={0}
             className="w-full"
           />
           <SelectField

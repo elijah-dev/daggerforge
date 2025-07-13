@@ -31,7 +31,7 @@ export const prepareAdversaryInsert = (
     attack_damage_type: adversary.attackDamageType,
     is_public: adversary.public ?? false,
     created_by: user.id,
-    source: adversary.source,
+    source: adversary.source || null,
   };
 };
 
