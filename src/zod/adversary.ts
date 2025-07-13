@@ -68,7 +68,7 @@ export const adversaryFormSchema = z.object({
   attackModifier: z.number().int(),
   attackName: z.string().min(1, "Attack name is required"),
   attackRange: adversaryAttackRangesEnum.default("melee"),
-  attackDamageDieCount: z.number().int().min(1, "Minimum 1 die required"),
+  attackDamageDieCount: z.number().int().min(0, "Number of dice can't be negative"),
   attackDamageDie: adversaryDamageDiceEnum.default("6"),
   attackDamageModifier: z.number().int().default(0),
   attackDamageType: adversaryDamageTypesEnum.default("physical"),

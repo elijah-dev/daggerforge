@@ -11,9 +11,15 @@ export const formatDamageString = (
   modifier?: number
 ): string => {
   let damageString = `${dieCount}d${dieSize}`;
+
   if (modifier) {
     damageString += `+${modifier}`;
   }
+
+  if (dieCount === 0) {
+    damageString = `${modifier ?? 0}`;
+  } 
+
   return damageString;
 };
 
@@ -42,9 +48,9 @@ export const includesBy = <T extends Record<string, unknown>>(
   field: keyof T,
   value: T[keyof T]
 ): boolean => {
-  return array.some((item => item[field] === value));
+  return array.some((item) => item[field] === value);
 };
 
 export const excludeNull = <T>(value: T | null | undefined): T | undefined => {
   return value === null ? undefined : value;
-}
+};
