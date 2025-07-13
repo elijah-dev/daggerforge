@@ -104,7 +104,9 @@ export const AdversaryDetails = (props: AdversaryDetailsProps) => {
           <span className="font-semibold">Stress:</span> {stress}
         </div>
         <div className="mb-1">
-          <span className="font-semibold">ATK:</span> +{attackModifier} |{" "}
+          <span className="font-semibold">ATK:</span>{" "}
+          {(attackModifier ?? 0) > 0 ? "+" : ""}
+          {attackModifier} |{" "}
           <span className="font-semibold">
             {attackName || adversaryFormPlaceholders.attackName}:
           </span>{" "}
@@ -126,9 +128,12 @@ export const AdversaryDetails = (props: AdversaryDetailsProps) => {
         <div>
           <h4 className="font-semibold block">FEATURES</h4>
           {filteredFeatures.map((feature) => (
-            <div key={feature.name} className="mb-1 pb-1 border-b last:border-0 last:mb-0 last:pb-0">
+            <div
+              key={feature.name}
+              className="mb-1 pb-1 border-b last:border-0 last:mb-0 last:pb-0"
+            >
               <span className="font-semibold italic text-sm">
-                {capitalize(feature.name)} - {capitalize(feature.type)}:
+                {feature.name} - {capitalize(feature.type)}:
               </span>
               <div
                 className="[&_ul]:list-disc [&_ul]:pl-4 [&_ul]:mt-1 [&_ol]:list-decimal [&_ol]:pl-4 [&_ol]:mt-1 font-extralight [&_strong]:font-semibold text-sm"
