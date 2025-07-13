@@ -1,0 +1,1 @@
+CREATE UNIQUE INDEX "motives_tactics_name_idx" ON "motives_tactics" USING btree ("name");

@@ -1,4 +1,4 @@
-import { pgEnum, pgTable, text, uuid } from "drizzle-orm/pg-core";
+import { integer, pgEnum, pgTable, text, uuid } from "drizzle-orm/pg-core";
 import { timestampts } from "./utils";
 import { adversariesTable } from "./adversaries";
 import { featureTypes } from "@/zod/feature";
@@ -13,6 +13,7 @@ export const featuresTable = pgTable("features", {
   name: text().notNull(),
   description: text().notNull(),
   type: featureType().default("action").notNull(),
+  order: integer().notNull(),
   ...timestampts,
 });
 

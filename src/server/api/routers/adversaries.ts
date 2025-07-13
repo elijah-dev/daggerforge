@@ -12,7 +12,7 @@ import {
   prepareAdversaryInsert,
   groupAdversaries,
 } from "@/server/api/utils/adversaries";
-import { eq, desc } from "drizzle-orm";
+import { eq, desc, inArray } from "drizzle-orm";
 
 export const adversariesRouter = createTRPCRouter({
   getAll: publicProcedure.query(async ({ ctx: { db } }) => {
@@ -52,7 +52,7 @@ export const adversariesRouter = createTRPCRouter({
           .values([prepareAdversaryInsert(input, user)])
           .returning();
 
-        const createdTactics = await tx
+        await tx
           .insert(motivesTacticsTable)
           .values(
             input.motivesAndTactics.map((motive) => ({
@@ -61,14 +61,26 @@ export const adversariesRouter = createTRPCRouter({
               is_public: input.public ?? false,
             }))
           )
-          .onConflictDoNothing()
-          .returning();
+          .onConflictDoNothing();
+
+        const existingTactics = await tx
+          .select()
+          .from(motivesTacticsTable)
+          .where(
+            inArray(
+              motivesTacticsTable.name,
+              input.motivesAndTactics.map((motive) => motive.toLowerCase())
+            )
+          );
 
         await tx.insert(adversariesMotivesTacticsTable).values(
-          createdTactics.map((tactic) => ({
-            adversary_id: createdAdversary.id,
-            motive_tactic_id: tactic.id,
-          }))
+          existingTactics.map((tactic) => {
+            return {
+              adversary_id: createdAdversary.id,
+              motive_tactic_id: tactic.id,
+              order: input.motivesAndTactics.indexOf(tactic.name.toLowerCase()),
+            };
+          })
         );
 
         let createdExperiences: SelectExperience[] = [];
@@ -77,10 +89,11 @@ export const adversariesRouter = createTRPCRouter({
           createdExperiences = await tx
             .insert(experiencesTable)
             .values(
-              input.experiences.map((experience) => ({
+              input.experiences.map((experience, index) => ({
                 adversary_id: createdAdversary.id,
                 name: experience.name.toLowerCase(),
                 value: experience.value,
+                order: index,
               }))
             )
             .returning();
@@ -92,11 +105,12 @@ export const adversariesRouter = createTRPCRouter({
           createdFeatures = await tx
             .insert(featuresTable)
             .values(
-              input.features.map((feature) => ({
+              input.features.map((feature, index) => ({
                 adversary_id: createdAdversary.id,
                 name: feature.name.toLowerCase(),
                 description: feature.description,
                 type: feature.type,
+                order: index,
               }))
             )
             .returning();
@@ -104,7 +118,7 @@ export const adversariesRouter = createTRPCRouter({
 
         return {
           ...createdAdversary,
-          motivesAndTactics: createdTactics,
+          motivesAndTactics: existingTactics,
           experiences: createdExperiences,
           features: createdFeatures,
         };

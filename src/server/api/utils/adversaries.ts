@@ -1,5 +1,6 @@
 import { castToNumber, formatDamageString, includesBy } from "@/lib/utils";
 import { SelectAdversary } from "@/server/db/schema/adversaries";
+import { SelectAdversariesMotivesTactics } from "@/server/db/schema/adversaries-motives-tactics";
 import { SelectExperience } from "@/server/db/schema/experiences";
 import { SelectFeature } from "@/server/db/schema/features";
 import { SelectMotiveTactic } from "@/server/db/schema/motives-tactics";
@@ -38,6 +39,7 @@ export const prepareAdversaryInsert = (
 export const groupAdversaries = (
   data: {
     adversaries: SelectAdversary;
+    adversaries_motives_tactics: SelectAdversariesMotivesTactics | null;
     motives_tactics: SelectMotiveTactic | null;
     experiences: SelectExperience | null;
     features: SelectFeature | null;
@@ -46,14 +48,21 @@ export const groupAdversaries = (
   const grouped: Record<
     string,
     SelectAdversary & {
-      motivesAndTactics: SelectMotiveTactic[];
+      motivesAndTactics: (SelectMotiveTactic & { order?: number })[];
       experiences: SelectExperience[];
       features: SelectFeature[];
     }
   > = {};
 
   data.forEach((item) => {
-    const { adversaries, motives_tactics, experiences, features } = item;
+    const {
+      adversaries,
+      motives_tactics,
+      adversaries_motives_tactics,
+      experiences,
+      features,
+    } = item;
+
     if (!grouped[adversaries.id]) {
       grouped[adversaries.id] = {
         ...adversaries,
@@ -68,15 +77,21 @@ export const groupAdversaries = (
     const feats = grouped[adversaries.id].features;
 
     if (motives_tactics && !includesBy(mt, "id", motives_tactics.id)) {
-      mt.push(motives_tactics);
+      mt.push({
+        ...motives_tactics,
+        order: adversaries_motives_tactics?.order,
+      });
+      mt.sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
     }
 
     if (experiences && !includesBy(exp, "id", experiences.id)) {
       exp.push(experiences);
+      exp.sort((a, b) => a.order - b.order);
     }
 
     if (features && !includesBy(feats, "id", features.id)) {
       feats.push(features);
+      feats.sort((a, b) => a.order - b.order);
     }
   });
 
