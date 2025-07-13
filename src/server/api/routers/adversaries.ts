@@ -107,7 +107,7 @@ export const adversariesRouter = createTRPCRouter({
             .values(
               input.features.map((feature, index) => ({
                 adversary_id: createdAdversary.id,
-                name: feature.name.toLowerCase(),
+                name: feature.name,
                 description: feature.description,
                 type: feature.type,
                 order: index,
