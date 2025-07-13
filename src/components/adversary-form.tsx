@@ -91,6 +91,7 @@ export const AdversaryForm = () => {
       experiences: [],
       public: false,
       features: [],
+      source: "",
     },
   });
 
@@ -124,7 +125,10 @@ export const AdversaryForm = () => {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="w-full space-y-2 mb-8">
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="w-full space-y-2 mb-8"
+      >
         {isSuperAdmin && (
           <div className="flex items-center gap-4">
             <SourceField
