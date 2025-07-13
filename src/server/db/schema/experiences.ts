@@ -9,6 +9,7 @@ export const experiencesTable = pgTable("experiences", {
     .references(() => adversariesTable.id, { onDelete: "cascade" }),
   name: text().notNull(),
   value: integer().notNull().default(0),
+  order: integer().notNull(),
   ...timestampts,
 });
 

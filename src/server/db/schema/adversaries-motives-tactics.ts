@@ -1,4 +1,4 @@
-import { pgTable, primaryKey, uuid } from "drizzle-orm/pg-core";
+import { pgTable, primaryKey, uuid, integer } from "drizzle-orm/pg-core";
 import { adversariesTable } from "./adversaries";
 import { motivesTacticsTable } from "./motives-tactics";
 import { timestampts } from "./utils";
@@ -12,6 +12,7 @@ export const adversariesMotivesTacticsTable = pgTable(
     motive_tactic_id: uuid()
       .notNull()
       .references(() => motivesTacticsTable.id, { onDelete: "cascade" }),
+    order: integer().notNull(),
     ...timestampts,
   },
   (table) => [
@@ -20,3 +21,5 @@ export const adversariesMotivesTacticsTable = pgTable(
     }),
   ]
 );
+
+export type SelectAdversariesMotivesTactics = typeof adversariesMotivesTacticsTable.$inferSelect;
