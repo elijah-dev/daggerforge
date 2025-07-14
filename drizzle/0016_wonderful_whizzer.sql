@@ -1,0 +1,1 @@
+ALTER TYPE "public"."damage_type" ADD VALUE 'mixed';
