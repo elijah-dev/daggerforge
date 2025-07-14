@@ -100,7 +100,7 @@ export const TextEditor = ({
       </div>
       <EditorContent
         className={cn(
-          "h-48 border-input px-3 py-1  md:text-sm",
+          "h-48 border-input px-3 py-1  md:text-sm overflow-y-auto",
           "[&_ul]:list-disc [&_ul]:pl-5 [&_ol]:list-decimal [&_ol]:pl-5",
           "*:outline-none *:h-full"
         )}
