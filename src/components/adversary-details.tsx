@@ -1,6 +1,10 @@
 import { adversaryFormPlaceholders } from "@/constants/placeholders";
 import { cn } from "@/lib/utils";
-import { AdversaryTypes } from "@/zod/adversary";
+import {
+  AdversaryAttackRanges,
+  AdversaryDamageTypes,
+  AdversaryTypes,
+} from "@/zod/adversary";
 import { Experience } from "@/zod/experience";
 import { Feature } from "@/zod/feature";
 import capitalize from "lodash/capitalize";
@@ -18,6 +22,16 @@ const formatThresholds = (major?: number, severe?: number) => {
   return `${major}/${severe}`;
 };
 
+const formatDamageType = (type?: AdversaryDamageTypes) => {
+  if (!type) return "";
+
+  if (type === "mixed") {
+    return "phy/mag";
+  }
+
+  return type.substring(0, 3);
+};
+
 type AdversaryDetailsProps = {
   name?: string;
   tier?: number;
@@ -31,9 +45,9 @@ type AdversaryDetailsProps = {
   stress?: number;
   attackModifier?: number;
   attackName?: string;
-  attackRange?: string;
+  attackRange?: AdversaryAttackRanges;
   attackDamage?: string;
-  attackDamageType?: string;
+  attackDamageType?: AdversaryDamageTypes;
   creaturesPerHp?: number;
   experiences?: Partial<Experience>[];
   features?: Partial<Feature>[];
@@ -111,7 +125,7 @@ export const AdversaryDetails = (props: AdversaryDetailsProps) => {
             {attackName || adversaryFormPlaceholders.attackName}:
           </span>{" "}
           {attackRange ?? ""} | {attackDamage}{" "}
-          {attackDamageType ? attackDamageType.substring(0, 3) : ""}
+          {formatDamageType(attackDamageType)}
         </div>
         {filteredExperiences.length ? (
           <div className="border-t mb-1 pt-1">

@@ -25,7 +25,7 @@ export const adversaryAttackRanges = [
 
 export const adversaryTiers = ["1", "2", "3", "4"] as const;
 
-export const adversaryDamageTypes = ["physical", "magical"] as const;
+export const adversaryDamageTypes = ["physical", "magical" , "mixed"] as const;
 
 export const adversaryDamageDice = [
   "4",

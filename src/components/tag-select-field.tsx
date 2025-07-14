@@ -44,6 +44,17 @@ export const TagSelectField = <
       control={control}
       name={name}
       render={({ field }) => {
+        const onClick = () => {
+          const normalizedInputValue = inputValue.trim().replace(/\s+/g, " ");
+
+          if (normalizedInputValue !== "") {
+            const newTags = [...(field.value || []), normalizedInputValue];
+            field.onChange(newTags);
+            setInputValue("");
+            inputRef.current?.focus();
+          }
+        };
+
         return (
           <FormItem className={className}>
             {label && <FormLabel className={labelClassName}>{label}</FormLabel>}
@@ -59,6 +70,12 @@ export const TagSelectField = <
                         e.target.value.replace(/[^a-zA-Z0-9\s]/g, "")
                       )
                     }
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        e.preventDefault();
+                        onClick();
+                      }
+                    }}
                   />
                   <Button
                     type="button"
@@ -67,21 +84,7 @@ export const TagSelectField = <
                       field.value.includes(inputValue) ||
                       inputValue.trim() === ""
                     }
-                    onClick={() => {
-                      const normalizedInputValue = inputValue
-                        .trim()
-                        .replace(/\s+/g, " ");
-
-                      if (normalizedInputValue !== "") {
-                        const newTags = [
-                          ...(field.value || []),
-                          normalizedInputValue,
-                        ];
-                        field.onChange(newTags);
-                        setInputValue("");
-                        inputRef.current?.focus();
-                      }
-                    }}
+                    onClick={onClick}
                   >
                     Add
                   </Button>

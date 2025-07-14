@@ -50,6 +50,27 @@ export const ExperienceSelectField = <
       control={control}
       name={name}
       render={({ field }) => {
+        const onClick = () => {
+          const normalizedInputValue = inputValue.trim().replace(/\s+/g, " ");
+
+          const normalizedNumberValue = Math.round(
+            Math.abs(parseInt(numberValue, 10))
+          );
+
+          if (normalizedInputValue !== "") {
+            const newTags = [
+              ...(field.value || []),
+              {
+                name: normalizedInputValue.toLowerCase(),
+                value: normalizedNumberValue,
+              },
+            ];
+            field.onChange(newTags);
+            setInputValue("");
+            inputRef.current?.focus();
+          }
+        };
+
         return (
           <FormItem className={className}>
             {label && <FormLabel className={labelClassName}>{label}</FormLabel>}
@@ -66,6 +87,12 @@ export const ExperienceSelectField = <
                       )
                     }
                     className="w-[200%]"
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        e.preventDefault();
+                        onClick();
+                      }
+                    }}
                   />
                   <Input
                     type="number"
@@ -73,6 +100,12 @@ export const ExperienceSelectField = <
                     min={1}
                     max={99}
                     onChange={(e) => setNumberValue(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        e.preventDefault();
+                        onClick();
+                      }
+                    }}
                   />
                   <Button
                     type="button"
@@ -81,28 +114,7 @@ export const ExperienceSelectField = <
                       field.value.includes(inputValue) ||
                       inputValue.trim() === ""
                     }
-                    onClick={() => {
-                      const normalizedInputValue = inputValue
-                        .trim()
-                        .replace(/\s+/g, " ");
-
-                      const normalizedNumberValue = Math.round(
-                        Math.abs(parseInt(numberValue, 10))
-                      );
-
-                      if (normalizedInputValue !== "") {
-                        const newTags = [
-                          ...(field.value || []),
-                          {
-                            name: normalizedInputValue.toLowerCase(),
-                            value: normalizedNumberValue,
-                          },
-                        ];
-                        field.onChange(newTags);
-                        setInputValue("");
-                        inputRef.current?.focus();
-                      }
-                    }}
+                    onClick={onClick}
                   >
                     Add
                   </Button>
