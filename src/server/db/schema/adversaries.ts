@@ -41,6 +41,9 @@ export const adversariesTable = pgTable(
     attack_name: text().notNull(),
     attack_range: attackRange().default("melee").notNull(),
     attack_damage: text().notNull(),
+    attack_damage_die_count: integer().notNull().default(1),
+    attack_damage_die: integer().notNull().default(6),
+    attack_damage_modifier: integer().notNull().default(0),
     attack_damage_type: damageType().default("physical").notNull(),
     created_by: uuid().references(() => usersTable.id, {
       onDelete: "set null",
@@ -52,6 +55,10 @@ export const adversariesTable = pgTable(
   (table) => {
     return [
       check("tier_check", sql`${table.tier} >= 1 AND ${table.tier} <= 4`),
+      check(
+        "damage_die_count_check",
+        sql`${table.attack_damage_die_count} >= 0`
+      ),
     ];
   }
 );
