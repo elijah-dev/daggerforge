@@ -29,6 +29,9 @@ export const prepareAdversaryInsert = (
       castToNumber(adversary.attackDamageDie, 6),
       adversary.attackDamageModifier
     ),
+    attack_damage_die_count: adversary.attackDamageDieCount,
+    attack_damage_die: castToNumber(adversary.attackDamageDie, 6),
+    attack_damage_modifier: adversary.attackDamageModifier,
     attack_damage_type: adversary.attackDamageType,
     is_public: adversary.public ?? false,
     created_by: user.id,
